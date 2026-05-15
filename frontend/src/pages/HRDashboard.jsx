@@ -1,7 +1,7 @@
+// frontend/src/pages/HRDashboard.jsx
+
 import { useEffect, useState } from "react";
-
 import axios from "axios";
-
 import { useNavigate } from "react-router-dom";
 
 function HRDashboard() {
@@ -11,13 +11,11 @@ function HRDashboard() {
   const [employees, setEmployees] =
     useState([]);
 
-  const [clients, setClients] =
-    useState([]);
-
   const [attendance, setAttendance] =
     useState([]);
 
-
+  const [clients, setClients] =
+    useState([]);
 
 
 
@@ -28,13 +26,11 @@ function HRDashboard() {
 
     getEmployees();
 
-    getClients();
-
     getAttendance();
 
+    getClients();
+
   }, []);
-
-
 
 
 
@@ -48,7 +44,6 @@ function HRDashboard() {
 
       const response =
         await axios.get(
-
           "https://crm-1q6v.onrender.com/api/employees"
         );
 
@@ -67,36 +62,6 @@ function HRDashboard() {
 
 
 
-
-
-  // GET CLIENTS
-  const getClients = async () => {
-
-    try {
-
-      const response =
-        await axios.get(
-
-          "https://crm-1q6v.onrender.com/api/clients"
-        );
-
-      setClients(response.data);
-
-    }
-
-    catch (error) {
-
-      console.log(error);
-    }
-  };
-
-
-
-
-
-
-
-
   // GET ATTENDANCE
   const getAttendance = async () => {
 
@@ -104,7 +69,6 @@ function HRDashboard() {
 
       const response =
         await axios.get(
-
           "https://crm-1q6v.onrender.com/api/attendance"
         );
 
@@ -119,6 +83,29 @@ function HRDashboard() {
   };
 
 
+
+
+
+
+  // GET CLIENTS
+  const getClients = async () => {
+
+    try {
+
+      const response =
+        await axios.get(
+          "https://crm-1q6v.onrender.com/api/clients"
+        );
+
+      setClients(response.data);
+
+    }
+
+    catch (error) {
+
+      console.log(error);
+    }
+  };
 
 
 
@@ -140,7 +127,6 @@ function HRDashboard() {
       try {
 
         await axios.delete(
-
           `https://crm-1q6v.onrender.com/api/employees/${id}`
         );
 
@@ -157,7 +143,7 @@ function HRDashboard() {
         console.log(error);
 
         alert(
-          "Failed To Remove"
+          "Failed To Remove Employee"
         );
       }
     };
@@ -167,9 +153,7 @@ function HRDashboard() {
 
 
 
-
-
-  // UPDATE SALES STATUS
+  // UPDATE SALE STATUS
   const updateStatus =
     async (id, status) => {
 
@@ -197,8 +181,6 @@ function HRDashboard() {
 
 
 
-
-
   // LOGOUT
   const logout = () => {
 
@@ -208,8 +190,6 @@ function HRDashboard() {
 
     navigate("/login");
   };
-
-
 
 
 
@@ -253,32 +233,25 @@ function HRDashboard() {
 
 
 
-
-
-
   return (
 
     <div
       style={{
         minHeight: "100vh",
-
         background:
           "linear-gradient(135deg,#020617,#0f172a)",
-
         padding: "30px",
       }}
     >
 
       {/* HEADER */}
+
       <div
         style={{
           display: "flex",
-
           justifyContent:
             "space-between",
-
           alignItems: "center",
-
           marginBottom: "30px",
         }}
       >
@@ -288,6 +261,7 @@ function HRDashboard() {
           <h1
             style={{
               color: "white",
+              marginBottom: "5px",
             }}
           >
             HR Dashboard
@@ -309,25 +283,16 @@ function HRDashboard() {
 
 
 
-
-
         <button
           onClick={logout}
-
           style={{
             padding:
               "12px 25px",
-
             border: "none",
-
             borderRadius: "10px",
-
             background: "#ef4444",
-
             color: "white",
-
             fontWeight: "bold",
-
             cursor: "pointer",
           }}
         >
@@ -344,103 +309,13 @@ function HRDashboard() {
 
 
 
-      {/* CARDS */}
-      <div
-        style={{
-          display: "grid",
+      {/* EMPLOYEE DETAILS */}
 
-          gridTemplateColumns:
-            "repeat(auto-fit,minmax(250px,1fr))",
-
-          gap: "20px",
-
-          marginBottom: "30px",
-        }}
-      >
-
-        <div style={cardStyle}>
-          <h3 style={cardTitle}>
-            Employees
-          </h3>
-
-          <h1 style={cardValue}>
-            {employees.length}
-          </h1>
-        </div>
-
-
-
-
-
-
-
-
-        <div style={cardStyle}>
-          <h3 style={cardTitle}>
-            Active Employees
-          </h3>
-
-          <h1
-            style={{
-              ...cardValue,
-              color: "#22c55e",
-            }}
-          >
-            {
-              attendance.filter(
-                (item) =>
-                  !item.logoutTime
-              ).length
-            }
-          </h1>
-        </div>
-
-
-
-
-
-
-
-
-        <div style={cardStyle}>
-          <h3 style={cardTitle}>
-            Sales Done
-          </h3>
-
-          <h1
-            style={{
-              ...cardValue,
-              color: "#0ea5e9",
-            }}
-          >
-            {
-              clients.filter(
-                (item) =>
-                  item.status ===
-                  "Done"
-              ).length
-            }
-          </h1>
-        </div>
-
-      </div>
-
-
-
-
-
-
-
-
-
-      {/* EMPLOYEES */}
       <div style={tableContainer}>
 
         <h2 style={sectionTitle}>
           Employee Details
         </h2>
-
-
 
 
 
@@ -458,7 +333,7 @@ function HRDashboard() {
             >
 
               <th style={thStyle}>
-                Name
+                Employee Name
               </th>
 
               <th style={thStyle}>
@@ -466,14 +341,12 @@ function HRDashboard() {
               </th>
 
               <th style={thStyle}>
-                Remove
+                Remove Employee
               </th>
 
             </tr>
 
           </thead>
-
-
 
 
 
@@ -496,13 +369,9 @@ function HRDashboard() {
 
 
 
-
-
                   <td style={tdStyle}>
                     {employee.email}
                   </td>
-
-
 
 
 
@@ -520,24 +389,21 @@ function HRDashboard() {
 
                       style={{
                         padding:
-                          "10px 15px",
-
+                          "10px 18px",
                         border: "none",
-
                         borderRadius:
                           "10px",
-
                         background:
                           "#ef4444",
-
                         color:
                           "white",
-
                         cursor:
                           "pointer",
+                        fontWeight:
+                          "bold",
                       }}
                     >
-                      Remove
+                      Delete
                     </button>
 
                   </td>
@@ -561,6 +427,7 @@ function HRDashboard() {
 
 
       {/* ATTENDANCE */}
+
       <div
         style={{
           ...tableContainer,
@@ -571,8 +438,6 @@ function HRDashboard() {
         <h2 style={sectionTitle}>
           Employee Attendance
         </h2>
-
-
 
 
 
@@ -618,8 +483,6 @@ function HRDashboard() {
 
 
 
-
-
           <tbody>
 
             {attendance.map(
@@ -632,8 +495,6 @@ function HRDashboard() {
                       item.employeeName
                     }
                   </td>
-
-
 
 
 
@@ -653,9 +514,8 @@ function HRDashboard() {
 
 
 
-
-
                   <td style={tdStyle}>
+
                     {item.logoutTime
                       ?
                       new Date(
@@ -663,9 +523,8 @@ function HRDashboard() {
                       ).toLocaleString()
                       :
                       "--"}
+
                   </td>
-
-
 
 
 
@@ -673,15 +532,15 @@ function HRDashboard() {
 
 
                   <td style={tdStyle}>
+
                     {
                       calculateHours(
                         item.loginTime,
                         item.logoutTime
                       )
                     }
+
                   </td>
-
-
 
 
 
@@ -694,22 +553,21 @@ function HRDashboard() {
                       style={{
                         padding:
                           "8px 15px",
-
                         borderRadius:
                           "20px",
-
                         background:
                           item.logoutTime
                             ? "#ef4444"
                             : "#22c55e",
-
                         color:
                           "white",
                       }}
                     >
+
                       {item.logoutTime
                         ? "Offline"
                         : "Active"}
+
                     </span>
 
                   </td>
@@ -733,6 +591,7 @@ function HRDashboard() {
 
 
       {/* CLIENTS */}
+
       <div
         style={{
           ...tableContainer,
@@ -741,10 +600,8 @@ function HRDashboard() {
       >
 
         <h2 style={sectionTitle}>
-          Client Sales
+          Employee Clients & Sales
         </h2>
-
-
 
 
 
@@ -766,7 +623,7 @@ function HRDashboard() {
               </th>
 
               <th style={thStyle}>
-                Client
+                Client Name
               </th>
 
               <th style={thStyle}>
@@ -790,22 +647,18 @@ function HRDashboard() {
 
 
 
-
-
           <tbody>
 
             {clients.map(
-              (item, index) => (
+              (client, index) => (
 
                 <tr key={index}>
 
                   <td style={tdStyle}>
                     {
-                      item.employeeName
+                      client.employeeName
                     }
                   </td>
-
-
 
 
 
@@ -814,7 +667,7 @@ function HRDashboard() {
 
                   <td style={tdStyle}>
                     {
-                      item.clientName
+                      client.clientName
                     }
                   </td>
 
@@ -823,10 +676,8 @@ function HRDashboard() {
 
 
 
-
-
                   <td style={tdStyle}>
-                    {item.email}
+                    {client.email}
                   </td>
 
 
@@ -834,13 +685,9 @@ function HRDashboard() {
 
 
 
-
-
                   <td style={tdStyle}>
-                    {item.phone}
+                    {client.phone}
                   </td>
-
-
 
 
 
@@ -851,12 +698,12 @@ function HRDashboard() {
 
                     <select
                       value={
-                        item.status
+                        client.status
                       }
 
                       onChange={(e) =>
                         updateStatus(
-                          item._id,
+                          client._id,
                           e.target.value
                         )
                       }
@@ -864,19 +711,15 @@ function HRDashboard() {
                       style={{
                         padding:
                           "10px",
-
                         borderRadius:
                           "10px",
-
                         border:
                           "none",
-
                         background:
-                          item.status ===
+                          client.status ===
                           "Done"
                             ? "#22c55e"
                             : "#f59e0b",
-
                         color:
                           "white",
                       }}
@@ -915,56 +758,6 @@ function HRDashboard() {
 
 
 
-
-
-const cardStyle = {
-
-  background: "#111827",
-
-  padding: "25px",
-
-  borderRadius: "20px",
-};
-
-
-
-
-
-
-
-
-
-
-const cardTitle = {
-
-  color: "#94a3b8",
-};
-
-
-
-
-
-
-
-
-
-
-const cardValue = {
-
-  color: "white",
-
-  fontSize: "40px",
-};
-
-
-
-
-
-
-
-
-
-
 const tableContainer = {
 
   background: "#111827",
@@ -975,10 +768,6 @@ const tableContainer = {
 
   overflowX: "auto",
 };
-
-
-
-
 
 
 
@@ -997,10 +786,6 @@ const sectionTitle = {
 
 
 
-
-
-
-
 const tableStyle = {
 
   width: "100%",
@@ -1008,10 +793,6 @@ const tableStyle = {
   borderCollapse:
     "collapse",
 };
-
-
-
-
 
 
 
@@ -1032,10 +813,6 @@ const thStyle = {
 
 
 
-
-
-
-
 const tdStyle = {
 
   padding: "15px",
@@ -1045,10 +822,6 @@ const tdStyle = {
   borderBottom:
     "1px solid #1e293b",
 };
-
-
-
-
 
 
 
