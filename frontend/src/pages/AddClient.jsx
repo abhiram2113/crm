@@ -1,59 +1,115 @@
 import { useState } from "react";
 
-import { useNavigate } from "react-router-dom";
-
 import axios from "axios";
+
+import { useNavigate } from "react-router-dom";
 
 function AddClient() {
 
   const navigate = useNavigate();
 
-  const [name, setName] = useState("");
+  const employee =
+    JSON.parse(
+      localStorage.getItem(
+        "employee"
+      )
+    );
 
-  const [phone, setPhone] = useState("");
 
-  const [email, setEmail] = useState("");
+
+
+
+
+
+
+  const [clientName, setClientName] =
+    useState("");
+
+  const [email, setEmail] =
+    useState("");
+
+  const [phone, setPhone] =
+    useState("");
 
   const [location, setLocation] =
     useState("");
 
 
 
-  const saveClient = async () => {
+
+
+
+
+
+  // ADD CLIENT
+  const addClient = async () => {
 
     try {
 
-      const newClient = {
-        employeeName:
-          localStorage.getItem(
-            "username"
-          ),
-
-        name,
-        phone,
-        email,
-        location,
-      };
-
-
-
       await axios.post(
+
         "https://crm-1q6v.onrender.com/api/clients",
-        newClient
+
+        {
+          employeeName:
+            employee.name,
+
+          clientName,
+
+          email,
+
+          phone,
+
+          location,
+
+          status:
+            "Not Done",
+        }
       );
 
 
 
-      alert("Client Added Successfully");
 
-      navigate("/");
+
+
+
+
+      alert(
+        "Client Added Successfully"
+      );
+
+
+
+
+
+
+
+
+      // GO BACK TO DASHBOARD
+      navigate(
+        "/dashboard"
+      );
+
     }
 
     catch (error) {
 
       console.log(error);
+
+      alert(
+        "Failed To Add Client"
+      );
     }
   };
+
+
+
+
+
+
+
+
+
 
 
 
@@ -61,112 +117,244 @@ function AddClient() {
 
     <div
       style={{
-        padding: "20px",
-        fontFamily: "Arial",
-        backgroundColor: "#f4f4f4",
         minHeight: "100vh",
+
+        display: "flex",
+
+        justifyContent: "center",
+
+        alignItems: "center",
+
+        background:
+          "linear-gradient(135deg,#020617,#0f172a,#1e293b)",
+
+        padding: "20px",
       }}
     >
 
-      <h2>Add Client</h2>
-
-
-
-      <input
-        type="text"
-        placeholder="Client Name"
-
-        value={name}
-
-        onChange={(e) =>
-          setName(e.target.value)
-        }
-
+      <div
         style={{
-          width: "100%",
-          padding: "10px",
-          marginTop: "10px",
-        }}
-      />
+          width: "450px",
 
+          background:
+            "#111827",
 
+          padding: "40px",
 
-      <input
-        type="text"
-        placeholder="Phone"
+          borderRadius: "20px",
 
-        value={phone}
-
-        onChange={(e) =>
-          setPhone(e.target.value)
-        }
-
-        style={{
-          width: "100%",
-          padding: "10px",
-          marginTop: "10px",
-        }}
-      />
-
-
-
-      <input
-        type="email"
-        placeholder="Email"
-
-        value={email}
-
-        onChange={(e) =>
-          setEmail(e.target.value)
-        }
-
-        style={{
-          width: "100%",
-          padding: "10px",
-          marginTop: "10px",
-        }}
-      />
-
-
-
-      <input
-        type="text"
-        placeholder="Location"
-
-        value={location}
-
-        onChange={(e) =>
-          setLocation(e.target.value)
-        }
-
-        style={{
-          width: "100%",
-          padding: "10px",
-          marginTop: "10px",
-        }}
-      />
-
-
-
-      <button
-        onClick={saveClient}
-
-        style={{
-          marginTop: "20px",
-          padding: "10px 20px",
-          backgroundColor: "blue",
-          color: "white",
-          border: "none",
-          borderRadius: "5px",
+          boxShadow:
+            "0px 0px 30px rgba(0,0,0,0.4)",
         }}
       >
 
-        Save Client
+        <h1
+          style={{
+            color: "white",
 
-      </button>
+            textAlign: "center",
+
+            marginBottom: "10px",
+          }}
+        >
+          Add Client
+        </h1>
+
+
+
+
+
+
+
+
+        <p
+          style={{
+            color: "#94a3b8",
+
+            textAlign: "center",
+
+            marginBottom: "30px",
+          }}
+        >
+          Add New Client Details
+        </p>
+
+
+
+
+
+
+
+
+
+        {/* CLIENT NAME */}
+        <input
+          type="text"
+
+          placeholder="Client Name"
+
+          value={clientName}
+
+          onChange={(e) =>
+            setClientName(
+              e.target.value
+            )
+          }
+
+          style={inputStyle}
+        />
+
+
+
+
+
+
+
+
+
+        {/* EMAIL */}
+        <input
+          type="email"
+
+          placeholder="Client Email"
+
+          value={email}
+
+          onChange={(e) =>
+            setEmail(
+              e.target.value
+            )
+          }
+
+          style={inputStyle}
+        />
+
+
+
+
+
+
+
+
+
+        {/* PHONE */}
+        <input
+          type="text"
+
+          placeholder="Phone Number"
+
+          value={phone}
+
+          onChange={(e) =>
+            setPhone(
+              e.target.value
+            )
+          }
+
+          style={inputStyle}
+        />
+
+
+
+
+
+
+
+
+
+        {/* LOCATION */}
+        <input
+          type="text"
+
+          placeholder="Location"
+
+          value={location}
+
+          onChange={(e) =>
+            setLocation(
+              e.target.value
+            )
+          }
+
+          style={inputStyle}
+        />
+
+
+
+
+
+
+
+
+
+        {/* BUTTON */}
+        <button
+          onClick={addClient}
+
+          style={{
+            width: "100%",
+
+            padding: "15px",
+
+            border: "none",
+
+            borderRadius: "12px",
+
+            background: "#0ea5e9",
+
+            color: "white",
+
+            fontWeight: "bold",
+
+            fontSize: "16px",
+
+            cursor: "pointer",
+          }}
+        >
+          Add Client
+        </button>
+
+      </div>
 
     </div>
   );
 }
+
+
+
+
+
+
+
+
+
+
+const inputStyle = {
+
+  width: "100%",
+
+  padding: "15px",
+
+  marginBottom: "18px",
+
+  borderRadius: "12px",
+
+  border: "none",
+
+  background: "#1e293b",
+
+  color: "white",
+
+  fontSize: "15px",
+};
+
+
+
+
+
+
+
+
+
 
 export default AddClient;
