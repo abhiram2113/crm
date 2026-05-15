@@ -11,6 +11,12 @@ function HRDashboard() {
   const [employees, setEmployees] =
     useState([]);
 
+  const [clients, setClients] =
+    useState([]);
+
+  const [attendance, setAttendance] =
+    useState([]);
+
 
 
 
@@ -21,6 +27,10 @@ function HRDashboard() {
   useEffect(() => {
 
     getEmployees();
+
+    getClients();
+
+    getAttendance();
 
   }, []);
 
@@ -59,7 +69,63 @@ function HRDashboard() {
 
 
 
-  // DELETE EMPLOYEE
+  // GET CLIENTS
+  const getClients = async () => {
+
+    try {
+
+      const response =
+        await axios.get(
+
+          "https://crm-1q6v.onrender.com/api/clients"
+        );
+
+      setClients(response.data);
+
+    }
+
+    catch (error) {
+
+      console.log(error);
+    }
+  };
+
+
+
+
+
+
+
+
+  // GET ATTENDANCE
+  const getAttendance = async () => {
+
+    try {
+
+      const response =
+        await axios.get(
+
+          "https://crm-1q6v.onrender.com/api/attendance"
+        );
+
+      setAttendance(response.data);
+
+    }
+
+    catch (error) {
+
+      console.log(error);
+    }
+  };
+
+
+
+
+
+
+
+
+  // REMOVE EMPLOYEE
   const removeEmployee =
     async (id) => {
 
@@ -103,6 +169,36 @@ function HRDashboard() {
 
 
 
+  // UPDATE SALES STATUS
+  const updateStatus =
+    async (id, status) => {
+
+      try {
+
+        await axios.put(
+
+          `https://crm-1q6v.onrender.com/api/clients/${id}`,
+
+          { status }
+        );
+
+        getClients();
+
+      }
+
+      catch (error) {
+
+        console.log(error);
+      }
+    };
+
+
+
+
+
+
+
+
   // LOGOUT
   const logout = () => {
 
@@ -112,6 +208,42 @@ function HRDashboard() {
 
     navigate("/login");
   };
+
+
+
+
+
+
+
+
+  // WORKING HOURS
+  const calculateHours =
+    (loginTime, logoutTime) => {
+
+      if (!logoutTime)
+        return "Still Working";
+
+      const start =
+        new Date(loginTime);
+
+      const end =
+        new Date(logoutTime);
+
+      const diff =
+        end - start;
+
+      const hours =
+        Math.floor(
+          diff / 1000 / 60 / 60
+        );
+
+      const minutes =
+        Math.floor(
+          (diff / 1000 / 60) % 60
+        );
+
+      return `${hours}h ${minutes}m`;
+    };
 
 
 
@@ -166,7 +298,8 @@ function HRDashboard() {
               color: "#94a3b8",
             }}
           >
-            Employee Management
+            Employee Monitoring &
+            Sales Management
           </p>
 
         </div>
@@ -211,27 +344,100 @@ function HRDashboard() {
 
 
 
-      {/* EMPLOYEE TABLE */}
+      {/* CARDS */}
       <div
         style={{
-          background: "#111827",
+          display: "grid",
 
-          borderRadius: "20px",
+          gridTemplateColumns:
+            "repeat(auto-fit,minmax(250px,1fr))",
 
-          padding: "20px",
+          gap: "20px",
 
-          overflowX: "auto",
+          marginBottom: "30px",
         }}
       >
 
-        <h2
-          style={{
-            color: "white",
+        <div style={cardStyle}>
+          <h3 style={cardTitle}>
+            Employees
+          </h3>
 
-            marginBottom: "20px",
-          }}
-        >
-          Employees
+          <h1 style={cardValue}>
+            {employees.length}
+          </h1>
+        </div>
+
+
+
+
+
+
+
+
+        <div style={cardStyle}>
+          <h3 style={cardTitle}>
+            Active Employees
+          </h3>
+
+          <h1
+            style={{
+              ...cardValue,
+              color: "#22c55e",
+            }}
+          >
+            {
+              attendance.filter(
+                (item) =>
+                  !item.logoutTime
+              ).length
+            }
+          </h1>
+        </div>
+
+
+
+
+
+
+
+
+        <div style={cardStyle}>
+          <h3 style={cardTitle}>
+            Sales Done
+          </h3>
+
+          <h1
+            style={{
+              ...cardValue,
+              color: "#0ea5e9",
+            }}
+          >
+            {
+              clients.filter(
+                (item) =>
+                  item.status ===
+                  "Done"
+              ).length
+            }
+          </h1>
+        </div>
+
+      </div>
+
+
+
+
+
+
+
+
+
+      {/* EMPLOYEES */}
+      <div style={tableContainer}>
+
+        <h2 style={sectionTitle}>
+          Employee Details
         </h2>
 
 
@@ -241,14 +447,7 @@ function HRDashboard() {
 
 
 
-        <table
-          style={{
-            width: "100%",
-
-            borderCollapse:
-              "collapse",
-          }}
-        >
+        <table style={tableStyle}>
 
           <thead>
 
@@ -259,7 +458,7 @@ function HRDashboard() {
             >
 
               <th style={thStyle}>
-                Employee Name
+                Name
               </th>
 
               <th style={thStyle}>
@@ -321,7 +520,7 @@ function HRDashboard() {
 
                       style={{
                         padding:
-                          "10px 18px",
+                          "10px 15px",
 
                         border: "none",
 
@@ -334,15 +533,364 @@ function HRDashboard() {
                         color:
                           "white",
 
-                        fontWeight:
-                          "bold",
-
                         cursor:
                           "pointer",
                       }}
                     >
-                      Remove Employee
+                      Remove
                     </button>
+
+                  </td>
+
+                </tr>
+              )
+            )}
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+
+
+
+
+
+
+
+
+      {/* ATTENDANCE */}
+      <div
+        style={{
+          ...tableContainer,
+          marginTop: "30px",
+        }}
+      >
+
+        <h2 style={sectionTitle}>
+          Employee Attendance
+        </h2>
+
+
+
+
+
+
+
+
+        <table style={tableStyle}>
+
+          <thead>
+
+            <tr
+              style={{
+                background: "#1e293b",
+              }}
+            >
+
+              <th style={thStyle}>
+                Employee
+              </th>
+
+              <th style={thStyle}>
+                Login Time
+              </th>
+
+              <th style={thStyle}>
+                Logout Time
+              </th>
+
+              <th style={thStyle}>
+                Working Hours
+              </th>
+
+              <th style={thStyle}>
+                Status
+              </th>
+
+            </tr>
+
+          </thead>
+
+
+
+
+
+
+
+
+          <tbody>
+
+            {attendance.map(
+              (item, index) => (
+
+                <tr key={index}>
+
+                  <td style={tdStyle}>
+                    {
+                      item.employeeName
+                    }
+                  </td>
+
+
+
+
+
+
+
+
+                  <td style={tdStyle}>
+                    {
+                      new Date(
+                        item.loginTime
+                      ).toLocaleString()
+                    }
+                  </td>
+
+
+
+
+
+
+
+
+                  <td style={tdStyle}>
+                    {item.logoutTime
+                      ?
+                      new Date(
+                        item.logoutTime
+                      ).toLocaleString()
+                      :
+                      "--"}
+                  </td>
+
+
+
+
+
+
+
+
+                  <td style={tdStyle}>
+                    {
+                      calculateHours(
+                        item.loginTime,
+                        item.logoutTime
+                      )
+                    }
+                  </td>
+
+
+
+
+
+
+
+
+                  <td style={tdStyle}>
+
+                    <span
+                      style={{
+                        padding:
+                          "8px 15px",
+
+                        borderRadius:
+                          "20px",
+
+                        background:
+                          item.logoutTime
+                            ? "#ef4444"
+                            : "#22c55e",
+
+                        color:
+                          "white",
+                      }}
+                    >
+                      {item.logoutTime
+                        ? "Offline"
+                        : "Active"}
+                    </span>
+
+                  </td>
+
+                </tr>
+              )
+            )}
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+
+
+
+
+
+
+
+
+      {/* CLIENTS */}
+      <div
+        style={{
+          ...tableContainer,
+          marginTop: "30px",
+        }}
+      >
+
+        <h2 style={sectionTitle}>
+          Client Sales
+        </h2>
+
+
+
+
+
+
+
+
+        <table style={tableStyle}>
+
+          <thead>
+
+            <tr
+              style={{
+                background: "#1e293b",
+              }}
+            >
+
+              <th style={thStyle}>
+                Employee
+              </th>
+
+              <th style={thStyle}>
+                Client
+              </th>
+
+              <th style={thStyle}>
+                Email
+              </th>
+
+              <th style={thStyle}>
+                Phone
+              </th>
+
+              <th style={thStyle}>
+                Status
+              </th>
+
+            </tr>
+
+          </thead>
+
+
+
+
+
+
+
+
+          <tbody>
+
+            {clients.map(
+              (item, index) => (
+
+                <tr key={index}>
+
+                  <td style={tdStyle}>
+                    {
+                      item.employeeName
+                    }
+                  </td>
+
+
+
+
+
+
+
+
+                  <td style={tdStyle}>
+                    {
+                      item.clientName
+                    }
+                  </td>
+
+
+
+
+
+
+
+
+                  <td style={tdStyle}>
+                    {item.email}
+                  </td>
+
+
+
+
+
+
+
+
+                  <td style={tdStyle}>
+                    {item.phone}
+                  </td>
+
+
+
+
+
+
+
+
+                  <td style={tdStyle}>
+
+                    <select
+                      value={
+                        item.status
+                      }
+
+                      onChange={(e) =>
+                        updateStatus(
+                          item._id,
+                          e.target.value
+                        )
+                      }
+
+                      style={{
+                        padding:
+                          "10px",
+
+                        borderRadius:
+                          "10px",
+
+                        border:
+                          "none",
+
+                        background:
+                          item.status ===
+                          "Done"
+                            ? "#22c55e"
+                            : "#f59e0b",
+
+                        color:
+                          "white",
+                      }}
+                    >
+
+                      <option>
+                        Not Done
+                      </option>
+
+                      <option>
+                        Done
+                      </option>
+
+                    </select>
 
                   </td>
 
@@ -359,6 +907,107 @@ function HRDashboard() {
     </div>
   );
 }
+
+
+
+
+
+
+
+
+
+
+const cardStyle = {
+
+  background: "#111827",
+
+  padding: "25px",
+
+  borderRadius: "20px",
+};
+
+
+
+
+
+
+
+
+
+
+const cardTitle = {
+
+  color: "#94a3b8",
+};
+
+
+
+
+
+
+
+
+
+
+const cardValue = {
+
+  color: "white",
+
+  fontSize: "40px",
+};
+
+
+
+
+
+
+
+
+
+
+const tableContainer = {
+
+  background: "#111827",
+
+  borderRadius: "20px",
+
+  padding: "20px",
+
+  overflowX: "auto",
+};
+
+
+
+
+
+
+
+
+
+
+const sectionTitle = {
+
+  color: "white",
+
+  marginBottom: "20px",
+};
+
+
+
+
+
+
+
+
+
+
+const tableStyle = {
+
+  width: "100%",
+
+  borderCollapse:
+    "collapse",
+};
 
 
 
