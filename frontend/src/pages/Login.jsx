@@ -38,6 +38,62 @@ function Login() {
       // HR LOGIN
       if (isHR) {
 
+  // FIXED HR LOGIN
+
+  const hrEmail =
+    "hr@hireorbit.com";
+
+  const hrPassword =
+    "123456";
+
+
+
+
+
+
+
+
+  if (
+    email.trim() === hrEmail
+    &&
+    password.trim() === hrPassword
+  ) {
+
+    localStorage.setItem(
+      "isHRLoggedIn",
+      "true"
+    );
+
+
+
+
+
+
+
+
+    navigate(
+      "/hr-dashboard"
+    );
+
+  }
+
+  else {
+
+    alert(
+      "Invalid HR Credentials"
+    );
+  }
+
+
+
+
+
+
+
+
+  return;
+}
+
   // DEFAULT HR LOGIN
 
   if (
