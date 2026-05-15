@@ -57,16 +57,20 @@ router.post(
 
     try {
 
-      const {
-        email,
-        password,
-      } = req.body;
+      let {
+  email,
+  password,
+} = req.body;
+
+email = email.trim();
+
+password = password.trim();
 
       const employee =
-        await Employee.findOne({
-          email,
-          password,
-        });
+  await Employee.findOne({
+    email: email.trim(),
+    password: password.trim(),
+  });
 
       if (!employee) {
 
