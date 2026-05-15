@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 import { useNavigate } from "react-router-dom";
 
@@ -11,12 +11,6 @@ function Login() {
   const [isHR, setIsHR] =
     useState(false);
 
-  const [isSignup, setIsSignup] =
-    useState(false);
-
-  const [name, setName] =
-    useState("");
-
   const [email, setEmail] =
     useState("");
 
@@ -25,44 +19,6 @@ function Login() {
 
   const [rememberMe, setRememberMe] =
     useState(false);
-
-
-
-
-
-
-
-
-  // LOAD SAVED LOGIN
-  useEffect(() => {
-
-    const savedEmail =
-      localStorage.getItem(
-        "savedEmail"
-      );
-
-    const savedPassword =
-      localStorage.getItem(
-        "savedPassword"
-      );
-
-
-
-    if (
-      savedEmail &&
-      savedPassword
-    ) {
-
-      setEmail(savedEmail);
-
-      setPassword(savedPassword);
-
-      setRememberMe(true);
-
-    }
-
-  }, []);
-
 
 
 
@@ -89,15 +45,6 @@ function Login() {
           password
         );
 
-      } else {
-
-        localStorage.removeItem(
-          "savedEmail"
-        );
-
-        localStorage.removeItem(
-          "savedPassword"
-        );
       }
 
 
@@ -107,41 +54,17 @@ function Login() {
 
 
 
-      // =========================
+      // ======================
       // HR LOGIN
-      // =========================
+      // ======================
 
       if (isHR) {
 
-        const savedHR =
-          JSON.parse(
-            localStorage.getItem(
-              "hrAccount"
-            )
-          );
-
-
-
-        if (!savedHR) {
-
-          alert(
-            "No HR Account Found"
-          );
-
-          return;
-        }
-
-
-
-
-
-
-
-
+        // STATIC HR LOGIN
         if (
-          savedHR.email === email
+          email === "hr@gmail.com"
           &&
-          savedHR.password === password
+          password === "123456"
         ) {
 
           localStorage.setItem(
@@ -154,6 +77,8 @@ function Login() {
           navigate(
             "/hr-dashboard"
           );
+
+
 
         } else {
 
@@ -172,9 +97,9 @@ function Login() {
 
 
 
-      // =========================
+      // ======================
       // EMPLOYEE LOGIN
-      // =========================
+      // ======================
 
       const response =
         await axios.post(
@@ -194,7 +119,8 @@ function Login() {
 
 
 
-      if (response.data.success) {
+      // SUCCESS
+      if (response.data.employee) {
 
         localStorage.setItem(
           "isLoggedIn",
@@ -213,12 +139,14 @@ function Login() {
 
 
 
-        navigate("/dashboard");
+        navigate(
+          "/dashboard"
+        );
 
       } else {
 
         alert(
-          response.data.message
+          "Invalid Employee Credentials"
         );
       }
 
@@ -226,94 +154,10 @@ function Login() {
 
     catch (error) {
 
+      console.log(error);
+
       alert(
-        error.response?.data?.message
-        ||
         "Login Failed"
-      );
-    }
-  };
-
-
-
-
-
-
-
-
-
-  // SIGNUP
-  const signup = async () => {
-
-    try {
-
-      // HR SIGNUP
-      if (isHR) {
-
-        const hrData = {
-          name,
-          email,
-          password,
-        };
-
-
-
-        localStorage.setItem(
-          "hrAccount",
-          JSON.stringify(hrData)
-        );
-
-
-
-        alert(
-          "HR Account Created"
-        );
-
-
-
-        setIsSignup(false);
-
-        return;
-      }
-
-
-
-
-
-
-
-
-      // EMPLOYEE SIGNUP
-      const response =
-        await axios.post(
-
-          "https://crm-1q6v.onrender.com/api/employees/register",
-
-          {
-            name,
-            email,
-            password,
-          }
-        );
-
-
-
-      alert(
-        response.data.message
-      );
-
-
-
-      setIsSignup(false);
-
-    }
-
-    catch (error) {
-
-      alert(
-        error.response?.data?.message
-        ||
-        "Signup Failed"
       );
     }
   };
@@ -343,8 +187,6 @@ function Login() {
 
         background:
           "linear-gradient(135deg,#020617,#0f172a,#1e293b)",
-
-        padding: "20px",
       }}
     >
 
@@ -363,6 +205,8 @@ function Login() {
             "0px 0px 40px rgba(0,0,0,0.5)",
         }}
       >
+
+        {/* TITLE */}
 
         <h1
           style={{
@@ -392,7 +236,7 @@ function Login() {
             marginBottom: "30px",
           }}
         >
-          CRM & Employee Management
+          Employee & HR Portal
         </p>
 
 
@@ -442,7 +286,7 @@ function Login() {
               cursor: "pointer",
             }}
           >
-            Employee
+            Employee Login
           </button>
 
 
@@ -476,38 +320,10 @@ function Login() {
               cursor: "pointer",
             }}
           >
-            HR Portal
+            HR Login
           </button>
 
         </div>
-
-
-
-
-
-
-
-
-
-        {/* NAME */}
-        {isSignup && (
-
-          <input
-            type="text"
-
-            placeholder="Full Name"
-
-            value={name}
-
-            onChange={(e) =>
-              setName(
-                e.target.value
-              )
-            }
-
-            style={inputStyle}
-          />
-        )}
 
 
 
@@ -521,7 +337,11 @@ function Login() {
         <input
           type="email"
 
-          placeholder="Email"
+          placeholder={
+            isHR
+              ? "HR Email"
+              : "Employee Email"
+          }
 
           value={email}
 
@@ -568,38 +388,35 @@ function Login() {
 
 
         {/* REMEMBER */}
-        {!isSignup && (
+        <div
+          style={{
+            display: "flex",
 
-          <div
-            style={{
-              display: "flex",
+            alignItems: "center",
 
-              alignItems: "center",
+            gap: "10px",
 
-              gap: "10px",
+            marginBottom: "20px",
 
-              marginBottom: "20px",
+            color: "white",
+          }}
+        >
 
-              color: "white",
-            }}
-          >
+          <input
+            type="checkbox"
 
-            <input
-              type="checkbox"
+            checked={rememberMe}
 
-              checked={rememberMe}
+            onChange={() =>
+              setRememberMe(
+                !rememberMe
+              )
+            }
+          />
 
-              onChange={() =>
-                setRememberMe(
-                  !rememberMe
-                )
-              }
-            />
+          Remember Me
 
-            Remember Me
-
-          </div>
-        )}
+        </div>
 
 
 
@@ -609,13 +426,9 @@ function Login() {
 
 
 
-        {/* BUTTON */}
+        {/* LOGIN BUTTON */}
         <button
-          onClick={
-            isSignup
-              ? signup
-              : login
-          }
+          onClick={login}
 
           style={{
             width: "100%",
@@ -638,22 +451,12 @@ function Login() {
             fontSize: "17px",
 
             cursor: "pointer",
-
-            marginBottom: "20px",
           }}
         >
 
-          {isSignup
-            ? (
-              isHR
-                ? "Create HR Account"
-                : "Create Employee Account"
-            )
-            : (
-              isHR
-                ? "HR Login"
-                : "Employee Login"
-            )}
+          {isHR
+            ? "Login As HR"
+            : "Login As Employee"}
 
         </button>
 
@@ -665,44 +468,37 @@ function Login() {
 
 
 
-        {/* SWITCH */}
-        <p
-          style={{
-            color: "#94a3b8",
+        {/* HR CREDENTIALS */}
+        {isHR && (
 
-            textAlign: "center",
-          }}
-        >
-
-          {isSignup
-            ? "Already have account?"
-            : "New user?"}
-
-          <span
-            onClick={() =>
-              setIsSignup(
-                !isSignup
-              )
-            }
-
+          <div
             style={{
-              color: "#0ea5e9",
+              marginTop: "20px",
 
-              cursor: "pointer",
+              background: "#1e293b",
 
-              marginLeft: "8px",
+              padding: "15px",
 
-              fontWeight: "bold",
+              borderRadius: "12px",
+
+              color: "#cbd5e1",
+
+              fontSize: "14px",
             }}
           >
 
-            {isSignup
-              ? "Login"
-              : "Signup"}
+            <p>
+              HR Email:
+              hr@gmail.com
+            </p>
 
-          </span>
+            <p>
+              Password:
+              123456
+            </p>
 
-        </p>
+          </div>
+        )}
 
       </div>
 
