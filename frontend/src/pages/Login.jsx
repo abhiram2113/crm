@@ -38,6 +38,35 @@ function Login() {
       // HR LOGIN
       if (isHR) {
 
+  // DEFAULT HR LOGIN
+
+  if (
+    email === "hr@hireorbit.com"
+    &&
+    password === "123456"
+  ) {
+
+    localStorage.setItem(
+      "isHRLoggedIn",
+      "true"
+    );
+
+    navigate(
+      "/hr-dashboard"
+    );
+
+  }
+
+  else {
+
+    alert(
+      "Invalid HR Credentials"
+    );
+  }
+
+  return;
+}
+
         const hrData =
           JSON.parse(
             localStorage.getItem(
