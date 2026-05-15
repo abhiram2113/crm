@@ -1,5 +1,3 @@
-// frontend/src/pages/Login.jsx
-
 import { useState, useEffect } from "react";
 
 import axios from "axios";
@@ -10,8 +8,9 @@ function Login() {
 
   const navigate = useNavigate();
 
-  const [isHR, setIsHR] =
-    useState(false);
+  // MODES
+  const [mode, setMode] =
+    useState("employee");
 
   const [isSignup, setIsSignup] =
     useState(false);
@@ -87,7 +86,7 @@ function Login() {
 
     try {
 
-      // SAVE LOGIN DETAILS
+      // SAVE LOGIN
       if (rememberMe) {
 
         localStorage.setItem(
@@ -115,31 +114,18 @@ function Login() {
 
 
 
-      // ======================
+      // =====================
       // HR LOGIN
-      // ======================
+      // =====================
 
-      if (isHR) {
-
-        const hrEmail =
-          "hr@hireorbit.com";
-
-        const hrPassword =
-          "123456";
-
-
-
-
-
-
-
+      if (mode === "hr") {
 
         if (
           email.trim() ===
-            hrEmail
+            "hr@hireorbit.com"
           &&
           password.trim() ===
-            hrPassword
+            "123456"
         ) {
 
           localStorage.setItem(
@@ -184,9 +170,9 @@ function Login() {
 
 
 
-      // ======================
+      // =====================
       // EMPLOYEE LOGIN
-      // ======================
+      // =====================
 
       const response =
         await axios.post(
@@ -455,7 +441,9 @@ function Login() {
             type="button"
 
             onClick={() =>
-              setIsHR(false)
+              setMode(
+                "employee"
+              )
             }
 
             style={{
@@ -466,7 +454,8 @@ function Login() {
               border: "none",
 
               background:
-                !isHR
+                mode ===
+                "employee"
                   ? "#0ea5e9"
                   : "transparent",
 
@@ -492,7 +481,7 @@ function Login() {
             type="button"
 
             onClick={() =>
-              setIsHR(true)
+              setMode("hr")
             }
 
             style={{
@@ -503,7 +492,7 @@ function Login() {
               border: "none",
 
               background:
-                isHR
+                mode === "hr"
                   ? "#8b5cf6"
                   : "transparent",
 
@@ -527,8 +516,10 @@ function Login() {
 
 
 
-        {/* SIGNUP NAME */}
-        {isSignup && !isHR && (
+        {/* NAME */}
+        {isSignup &&
+          mode ===
+            "employee" && (
 
           <input
             type="text"
@@ -647,12 +638,14 @@ function Login() {
 
 
 
-        {/* LOGIN BUTTON */}
+        {/* BUTTON */}
         <button
           type="button"
 
           onClick={
-            isSignup && !isHR
+            isSignup &&
+            mode ===
+              "employee"
               ? signup
               : login
           }
@@ -667,7 +660,7 @@ function Login() {
             borderRadius: "12px",
 
             background:
-              isHR
+              mode === "hr"
                 ? "#8b5cf6"
                 : "#0ea5e9",
 
@@ -683,10 +676,14 @@ function Login() {
           }}
         >
 
-          {isSignup && !isHR
+          {isSignup &&
+          mode ===
+            "employee"
+
             ? "Create Employee Account"
+
             : (
-              isHR
+              mode === "hr"
                 ? "HR Login"
                 : "Employee Login"
             )}
@@ -701,8 +698,9 @@ function Login() {
 
 
 
-        {/* SWITCH */}
-        {!isHR && (
+        {/* SIGNUP SWITCH */}
+        {mode ===
+          "employee" && (
 
           <p
             style={{
