@@ -38,7 +38,7 @@ function AddClient() {
 
 
       await axios.post(
-        "http://localhost:5000/api/clients",
+        "https://crm-1q6v.onrender.com/api/clients",
         newClient
       );
 

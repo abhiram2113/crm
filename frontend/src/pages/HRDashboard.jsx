@@ -71,7 +71,7 @@ function HRDashboard() {
 
         const response =
           await fetch(
-            "http://localhost:5000/api/clients"
+            "https://crm-1q6v.onrender.com/api/clients"
           );
 
         const data =
@@ -105,7 +105,7 @@ function HRDashboard() {
 
         const response =
           await fetch(
-            "http://localhost:5000/api/attendance"
+            "https://crm-1q6v.onrender.com/api/attendance"
           );
 
         const data =
@@ -138,7 +138,7 @@ function HRDashboard() {
       try {
 
         await fetch(
-          `http://localhost:5000/api/clients/${id}`,
+          `https://crm-1q6v.onrender.com/api/clients/${id}`,
           {
             method: "PUT",
 

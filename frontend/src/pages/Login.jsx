@@ -122,7 +122,7 @@ function Login() {
 
           const response =
             await fetch(
-              "http://localhost:5000/api/employees/register",
+              "https://crm-1q6v.onrender.com/api/employees/register",
               {
                 method:
                   "POST",
@@ -162,7 +162,7 @@ function Login() {
         // LOGIN
         const response =
           await fetch(
-            "http://localhost:5000/api/employees/login",
+            "https://crm-1q6v.onrender.com/api/employees/login",
             {
               method:
                 "POST",
@@ -287,7 +287,7 @@ function Login() {
         // ATTENDANCE LOGIN
         const attendanceResponse =
           await fetch(
-            "http://localhost:5000/api/attendance/login",
+            "https://crm-1q6v.onrender.com/api/attendance/login",
             {
               method:
                 "POST",

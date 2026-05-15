@@ -1,45 +1,42 @@
 import { useEffect, useState } from "react";
-
 import { useNavigate } from "react-router-dom";
 
 function Dashboard() {
 
   const navigate = useNavigate();
 
-  const [clients, setClients] =
-    useState([]);
+  const [clients, setClients] = useState([]);
 
   const [employee, setEmployee] =
     useState(null);
 
 
 
-
-
-  // CHECK LOGIN
+  // LOAD EMPLOYEE
   useEffect(() => {
 
     const storedEmployee =
-      localStorage.getItem(
-        "employee"
+      JSON.parse(
+        localStorage.getItem("employee")
       );
-
-
 
     if (!storedEmployee) {
 
-      navigate("/");
+      navigate("/login");
 
-      return;
+    } else {
+
+      setEmployee(storedEmployee);
+
     }
 
+  }, []);
 
 
-    setEmployee(
-      JSON.parse(storedEmployee)
-    );
 
 
+  // LOAD CLIENTS
+  useEffect(() => {
 
     fetchClients();
 
@@ -48,51 +45,41 @@ function Dashboard() {
 
 
 
+  const fetchClients = async () => {
 
+    try {
 
+      const response =
+        await fetch(
+          "https://crm-1q6v.onrender.com/api/clients"
+        );
 
+      const data =
+        await response.json();
 
-  // FETCH CLIENTS
-  const fetchClients =
-    async () => {
+      setClients(data);
 
-      try {
+    }
 
-        const response =
-          await fetch(
-            "http://localhost:5000/api/clients"
-          );
+    catch (error) {
 
-        const data =
-          await response.json();
+      console.log(error);
 
-        setClients(data);
-
-      }
-
-      catch (error) {
-
-        console.log(error);
-
-      }
-    };
+    }
+  };
 
 
 
 
 
-
-
-
-
-  // UPDATE STATUS
+  // UPDATE SALE STATUS
   const updateStatus =
     async (id, status) => {
 
       try {
 
         await fetch(
-          `http://localhost:5000/api/clients/${id}`,
+          `https://crm-1q6v.onrender.com/api/clients/${id}`,
           {
             method: "PUT",
 
@@ -102,12 +89,10 @@ function Dashboard() {
             },
 
             body: JSON.stringify({
-              status,
+              saleStatus: status,
             }),
           }
         );
-
-
 
         fetchClients();
 
@@ -125,65 +110,50 @@ function Dashboard() {
 
 
 
-
-
-
   // LOGOUT
-  const handleLogout =
-    async () => {
+  const handleLogout = async () => {
 
-      try {
+    try {
 
-        const attendanceId =
-          localStorage.getItem(
-            "attendanceId"
-          );
-
-
-
-        if (attendanceId) {
-
-          await fetch(
-            `http://localhost:5000/api/attendance/logout/${attendanceId}`,
-            {
-              method: "PUT",
-            }
-          );
-        }
-
-
-
-
-
-
-        // CLEAR STORAGE
-        localStorage.removeItem(
-          "employee"
-        );
-
-        localStorage.removeItem(
+      const attendanceId =
+        localStorage.getItem(
           "attendanceId"
         );
 
 
 
+      if (attendanceId) {
 
-
-
-        // REDIRECT
-        navigate("/");
-
+        await fetch(
+          `https://crm-1q6v.onrender.com/api/attendance/logout/${attendanceId}`,
+          {
+            method: "PUT",
+          }
+        );
       }
 
-      catch (error) {
-
-        console.log(error);
-
-      }
-    };
 
 
+      localStorage.removeItem(
+        "employee"
+      );
 
+      localStorage.removeItem(
+        "attendanceId"
+      );
+
+
+
+      navigate("/login");
+
+    }
+
+    catch (error) {
+
+      console.log(error);
+
+    }
+  };
 
 
 
@@ -195,13 +165,9 @@ function Dashboard() {
     <div
       style={{
         padding: "30px",
-        background: "#f4f4f4",
-        minHeight: "100vh",
-        fontFamily: "Arial",
       }}
     >
 
-      {/* HEADER */}
       <div
         style={{
           display: "flex",
@@ -209,9 +175,6 @@ function Dashboard() {
             "space-between",
           alignItems: "center",
           marginBottom: "20px",
-          background: "white",
-          padding: "20px",
-          borderRadius: "10px",
         }}
       >
 
@@ -230,11 +193,8 @@ function Dashboard() {
 
 
 
-
-
         <button
           onClick={handleLogout}
-
           style={{
             padding: "10px 20px",
             background: "red",
@@ -253,16 +213,10 @@ function Dashboard() {
 
 
 
-
-
-
-
-      {/* ADD CLIENT */}
       <button
         onClick={() =>
           navigate("/add-client")
         }
-
         style={{
           padding: "10px 20px",
           marginBottom: "20px",
@@ -281,19 +235,13 @@ function Dashboard() {
 
 
 
-
-
-
-      {/* CLIENT TABLE */}
       <table
         border="1"
         cellPadding="10"
-
         style={{
           width: "100%",
           borderCollapse:
             "collapse",
-          background: "white",
         }}
       >
 
@@ -309,14 +257,11 @@ function Dashboard() {
 
             <th>Location</th>
 
-            <th>Status</th>
+            <th>Sale Status</th>
 
           </tr>
 
         </thead>
-
-
-
 
 
 
@@ -352,7 +297,7 @@ function Dashboard() {
 
                 <select
                   value={
-                    client.status
+                    client.saleStatus
                   }
 
                   onChange={(e) =>
