@@ -14,6 +14,9 @@ function HRDashboard() {
   const [attendance, setAttendance] =
     useState([]);
 
+  const [employees, setEmployees] =
+    useState([]);
+
 
 
 
@@ -26,6 +29,8 @@ function HRDashboard() {
     getClients();
 
     getAttendance();
+
+    getEmployees();
 
   }, []);
 
@@ -64,7 +69,6 @@ function HRDashboard() {
 
 
 
-
   // GET ATTENDANCE
   const getAttendance = async () => {
 
@@ -86,6 +90,77 @@ function HRDashboard() {
     }
   };
 
+
+
+
+
+
+
+
+  // GET EMPLOYEES
+  const getEmployees = async () => {
+
+    try {
+
+      const response =
+        await axios.get(
+
+          "https://crm-1q6v.onrender.com/api/employees"
+        );
+
+      setEmployees(response.data);
+
+    }
+
+    catch (error) {
+
+      console.log(error);
+    }
+  };
+
+
+
+
+
+
+
+
+  // DELETE EMPLOYEE
+  const deleteEmployee =
+    async (id) => {
+
+      const confirmDelete =
+        window.confirm(
+          "Remove this employee?"
+        );
+
+      if (!confirmDelete)
+        return;
+
+      try {
+
+        await axios.delete(
+
+          `https://crm-1q6v.onrender.com/api/employees/${id}`
+        );
+
+        alert(
+          "Employee Removed"
+        );
+
+        getEmployees();
+
+      }
+
+      catch (error) {
+
+        console.log(error);
+
+        alert(
+          "Failed To Remove Employee"
+        );
+      }
+    };
 
 
 
@@ -124,7 +199,6 @@ function HRDashboard() {
 
 
 
-
   // LOGOUT
   const logout = () => {
 
@@ -142,8 +216,7 @@ function HRDashboard() {
 
 
 
-
-  // CALCULATE WORKING HOURS
+  // CALCULATE HOURS
   const calculateHours =
     (loginTime, logoutTime) => {
 
@@ -225,8 +298,7 @@ function HRDashboard() {
               color: "#94a3b8",
             }}
           >
-            Employee Monitoring &
-            Sales Management
+            Employee Management
           </p>
 
         </div>
@@ -271,7 +343,7 @@ function HRDashboard() {
 
 
 
-      {/* TOP CARDS */}
+      {/* STATS */}
       <div
         style={{
           display: "grid",
@@ -287,11 +359,11 @@ function HRDashboard() {
 
         <div style={cardStyle}>
           <h3 style={cardTitle}>
-            Total Clients
+            Total Employees
           </h3>
 
           <h1 style={cardValue}>
-            {clients.length}
+            {employees.length}
           </h1>
         </div>
 
@@ -360,11 +432,143 @@ function HRDashboard() {
 
 
 
-      {/* ATTENDANCE TABLE */}
+      {/* EMPLOYEE LIST */}
       <div style={tableContainer}>
 
         <h2 style={sectionTitle}>
-          Employee Attendance
+          Employees
+        </h2>
+
+
+
+
+
+
+
+
+        <table style={tableStyle}>
+
+          <thead>
+
+            <tr
+              style={{
+                background: "#1e293b",
+              }}
+            >
+
+              <th style={thStyle}>
+                Name
+              </th>
+
+              <th style={thStyle}>
+                Email
+              </th>
+
+              <th style={thStyle}>
+                Action
+              </th>
+
+            </tr>
+
+          </thead>
+
+
+
+
+
+
+
+
+          <tbody>
+
+            {employees.map(
+              (employee, index) => (
+
+                <tr key={index}>
+
+                  <td style={tdStyle}>
+                    {employee.name}
+                  </td>
+
+
+
+
+
+
+
+
+                  <td style={tdStyle}>
+                    {employee.email}
+                  </td>
+
+
+
+
+
+
+
+
+                  <td style={tdStyle}>
+
+                    <button
+                      onClick={() =>
+                        deleteEmployee(
+                          employee._id
+                        )
+                      }
+
+                      style={{
+                        padding:
+                          "10px 18px",
+
+                        border: "none",
+
+                        borderRadius:
+                          "10px",
+
+                        background:
+                          "#ef4444",
+
+                        color:
+                          "white",
+
+                        cursor:
+                          "pointer",
+                      }}
+                    >
+                      Remove
+                    </button>
+
+                  </td>
+
+                </tr>
+              )
+            )}
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+
+
+
+
+
+
+
+
+      {/* ATTENDANCE */}
+      <div
+        style={{
+          ...tableContainer,
+          marginTop: "30px",
+        }}
+      >
+
+        <h2 style={sectionTitle}>
+          Attendance
         </h2>
 
 
@@ -502,7 +706,8 @@ function HRDashboard() {
                             ? "#ef4444"
                             : "#22c55e",
 
-                        color: "white",
+                        color:
+                          "white",
                       }}
                     >
 
@@ -511,171 +716,6 @@ function HRDashboard() {
                         : "Active"}
 
                     </span>
-
-                  </td>
-
-                </tr>
-              )
-            )}
-
-          </tbody>
-
-        </table>
-
-      </div>
-
-
-
-
-
-
-
-
-
-      {/* CLIENT TABLE */}
-      <div
-        style={{
-          ...tableContainer,
-          marginTop: "30px",
-        }}
-      >
-
-        <h2 style={sectionTitle}>
-          Client Sales
-        </h2>
-
-
-
-
-
-
-
-
-        <table style={tableStyle}>
-
-          <thead>
-
-            <tr
-              style={{
-                background: "#1e293b",
-              }}
-            >
-
-              <th style={thStyle}>
-                Employee
-              </th>
-
-              <th style={thStyle}>
-                Client
-              </th>
-
-              <th style={thStyle}>
-                Email
-              </th>
-
-              <th style={thStyle}>
-                Status
-              </th>
-
-            </tr>
-
-          </thead>
-
-
-
-
-
-
-
-
-          <tbody>
-
-            {clients.map(
-              (item, index) => (
-
-                <tr key={index}>
-
-                  <td style={tdStyle}>
-                    {
-                      item.employeeName
-                    }
-                  </td>
-
-
-
-
-
-
-
-
-                  <td style={tdStyle}>
-                    {
-                      item.clientName
-                    }
-                  </td>
-
-
-
-
-
-
-
-
-                  <td style={tdStyle}>
-                    {item.email}
-                  </td>
-
-
-
-
-
-
-
-
-                  <td style={tdStyle}>
-
-                    <select
-                      value={
-                        item.status
-                      }
-
-                      onChange={(e) =>
-                        updateStatus(
-                          item._id,
-                          e.target.value
-                        )
-                      }
-
-                      style={{
-                        padding:
-                          "10px",
-
-                        borderRadius:
-                          "10px",
-
-                        border:
-                          "none",
-
-                        background:
-                          item.status ===
-                          "Done"
-                            ? "#22c55e"
-                            : "#f59e0b",
-
-                        color:
-                          "white",
-                      }}
-                    >
-
-                      <option>
-                        Not Done
-                      </option>
-
-                      <option>
-                        Done
-                      </option>
-
-                    </select>
 
                   </td>
 
