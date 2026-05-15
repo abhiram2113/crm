@@ -1,4 +1,6 @@
-import { useState } from "react";
+// frontend/src/pages/Login.jsx
+
+import { useState, useEffect } from "react";
 
 import axios from "axios";
 
@@ -23,6 +25,56 @@ function Login() {
   const [password, setPassword] =
     useState("");
 
+  const [rememberMe, setRememberMe] =
+    useState(true);
+
+
+
+
+
+
+
+
+  // LOAD SAVED LOGIN
+  useEffect(() => {
+
+    const savedEmail =
+      localStorage.getItem(
+        "savedEmail"
+      );
+
+
+
+
+
+
+
+
+    const savedPassword =
+      localStorage.getItem(
+        "savedPassword"
+      );
+
+
+
+
+
+
+
+
+    if (
+      savedEmail &&
+      savedPassword
+    ) {
+
+      setEmail(savedEmail);
+
+      setPassword(savedPassword);
+    }
+
+  }, []);
+
+
 
 
 
@@ -35,116 +87,45 @@ function Login() {
 
     try {
 
+      // SAVE LOGIN DETAILS
+      if (rememberMe) {
+
+        localStorage.setItem(
+          "savedEmail",
+          email
+        );
+
+
+
+
+
+
+
+
+        localStorage.setItem(
+          "savedPassword",
+          password
+        );
+      }
+
+
+
+
+
+
+
+
+      // ======================
       // HR LOGIN
+      // ======================
+
       if (isHR) {
 
-  // FIXED HR LOGIN
+        const hrEmail =
+          "hr@hireorbit.com";
 
-  const hrEmail =
-    "hr@hireorbit.com";
-
-  const hrPassword =
-    "123456";
-
-
-
-
-
-
-
-
-  if (
-    email.trim() === hrEmail
-    &&
-    password.trim() === hrPassword
-  ) {
-
-    localStorage.setItem(
-      "isHRLoggedIn",
-      "true"
-    );
-
-
-
-
-
-
-
-
-    navigate(
-      "/hr-dashboard"
-    );
-
-  }
-
-  else {
-
-    alert(
-      "Invalid HR Credentials"
-    );
-  }
-
-
-
-
-
-
-
-
-  return;
-}
-
-  // DEFAULT HR LOGIN
-
-  if (
-    email === "hr@hireorbit.com"
-    &&
-    password === "123456"
-  ) {
-
-    localStorage.setItem(
-      "isHRLoggedIn",
-      "true"
-    );
-
-    navigate(
-      "/hr-dashboard"
-    );
-
-  }
-
-  else {
-
-    alert(
-      "Invalid HR Credentials"
-    );
-  }
-
-  return;
-}
-
-        const hrData =
-          JSON.parse(
-            localStorage.getItem(
-              "hrAccount"
-            )
-          );
-
-
-
-
-
-
-
-
-        if (!hrData) {
-
-          alert(
-            "No HR Account Found"
-          );
-
-          return;
-        }
+        const hrPassword =
+          "123456";
 
 
 
@@ -154,9 +135,11 @@ function Login() {
 
 
         if (
-          hrData.email === email
+          email.trim() ===
+            hrEmail
           &&
-          hrData.password === password
+          password.trim() ===
+            hrPassword
         ) {
 
           localStorage.setItem(
@@ -184,6 +167,13 @@ function Login() {
           );
         }
 
+
+
+
+
+
+
+
         return;
       }
 
@@ -194,15 +184,21 @@ function Login() {
 
 
 
+      // ======================
       // EMPLOYEE LOGIN
+      // ======================
+
       const response =
         await axios.post(
 
           "https://crm-1q6v.onrender.com/api/employees/login",
 
           {
-            email,
-            password,
+            email:
+              email.trim(),
+
+            password:
+              password.trim(),
           }
         );
 
@@ -214,7 +210,7 @@ function Login() {
 
 
       if (
-        response.data.employee
+        response.data.success
       ) {
 
         localStorage.setItem(
@@ -230,6 +226,7 @@ function Login() {
 
 
         localStorage.setItem(
+
           "employee",
 
           JSON.stringify(
@@ -263,7 +260,17 @@ function Login() {
 
       console.log(error);
 
+
+
+
+
+
+
+
       alert(
+        error.response?.data
+          ?.message
+        ||
         "Login Failed"
       );
     }
@@ -282,70 +289,19 @@ function Login() {
 
     try {
 
-      // HR SIGNUP
-      if (isHR) {
-
-        const hrData = {
-          name,
-          email,
-          password,
-        };
-
-
-
-
-
-
-
-
-        localStorage.setItem(
-
-          "hrAccount",
-
-          JSON.stringify(
-            hrData
-          )
-        );
-
-
-
-
-
-
-
-
-        alert(
-          "HR Account Created"
-        );
-
-
-
-
-
-
-
-
-        setIsSignup(false);
-
-        return;
-      }
-
-
-
-
-
-
-
-
-      // EMPLOYEE SIGNUP
       await axios.post(
 
         "https://crm-1q6v.onrender.com/api/employees/register",
 
         {
-          name,
-          email,
-          password,
+          name:
+            name.trim(),
+
+          email:
+            email.trim(),
+
+          password:
+            password.trim(),
         }
       );
 
@@ -375,7 +331,17 @@ function Login() {
 
       console.log(error);
 
+
+
+
+
+
+
+
       alert(
+        error.response?.data
+          ?.message
+        ||
         "Signup Failed"
       );
     }
@@ -406,6 +372,8 @@ function Login() {
 
         background:
           "linear-gradient(135deg,#020617,#0f172a,#1e293b)",
+
+        padding: "20px",
       }}
     >
 
@@ -433,9 +401,11 @@ function Login() {
             textAlign: "center",
 
             marginBottom: "10px",
+
+            fontSize: "36px",
           }}
         >
-          Hire Orbit CRM
+          HireOrbit
         </h1>
 
 
@@ -454,7 +424,7 @@ function Login() {
             marginBottom: "30px",
           }}
         >
-          Employee & HR Portal
+          CRM & Employee Management
         </p>
 
 
@@ -480,7 +450,10 @@ function Login() {
           }}
         >
 
+          {/* EMPLOYEE */}
           <button
+            type="button"
+
             onClick={() =>
               setIsHR(false)
             }
@@ -514,7 +487,10 @@ function Login() {
 
 
 
+          {/* HR */}
           <button
+            type="button"
+
             onClick={() =>
               setIsHR(true)
             }
@@ -551,8 +527,8 @@ function Login() {
 
 
 
-        {/* NAME */}
-        {isSignup && (
+        {/* SIGNUP NAME */}
+        {isSignup && !isHR && (
 
           <input
             type="text"
@@ -629,10 +605,54 @@ function Login() {
 
 
 
-        {/* BUTTON */}
+        {/* REMEMBER */}
+        {!isSignup && (
+
+          <div
+            style={{
+              display: "flex",
+
+              alignItems: "center",
+
+              gap: "10px",
+
+              marginBottom: "20px",
+
+              color: "white",
+            }}
+          >
+
+            <input
+              type="checkbox"
+
+              checked={rememberMe}
+
+              onChange={() =>
+                setRememberMe(
+                  !rememberMe
+                )
+              }
+            />
+
+            Remember Me
+
+          </div>
+        )}
+
+
+
+
+
+
+
+
+
+        {/* LOGIN BUTTON */}
         <button
+          type="button"
+
           onClick={
-            isSignup
+            isSignup && !isHR
               ? signup
               : login
           }
@@ -663,12 +683,8 @@ function Login() {
           }}
         >
 
-          {isSignup
-            ? (
-              isHR
-                ? "Create HR Account"
-                : "Create Employee Account"
-            )
+          {isSignup && !isHR
+            ? "Create Employee Account"
             : (
               isHR
                 ? "HR Login"
@@ -686,50 +702,53 @@ function Login() {
 
 
         {/* SWITCH */}
-        <p
-          style={{
-            color: "#94a3b8",
+        {!isHR && (
 
-            textAlign: "center",
-          }}
-        >
-
-          {isSignup
-            ? "Already have an account?"
-            : "Don't have an account?"}
-
-
-
-
-
-
-
-
-          <span
-            onClick={() =>
-              setIsSignup(
-                !isSignup
-              )
-            }
-
+          <p
             style={{
-              color: "#0ea5e9",
+              color: "#94a3b8",
 
-              marginLeft: "8px",
-
-              cursor: "pointer",
-
-              fontWeight: "bold",
+              textAlign: "center",
             }}
           >
 
             {isSignup
-              ? "Login"
-              : "Signup"}
+              ? "Already have an account?"
+              : "Don't have an account?"}
 
-          </span>
 
-        </p>
+
+
+
+
+
+
+            <span
+              onClick={() =>
+                setIsSignup(
+                  !isSignup
+                )
+              }
+
+              style={{
+                color: "#0ea5e9",
+
+                marginLeft: "8px",
+
+                cursor: "pointer",
+
+                fontWeight: "bold",
+              }}
+            >
+
+              {isSignup
+                ? "Login"
+                : "Signup"}
+
+            </span>
+
+          </p>
+        )}
 
       </div>
 
