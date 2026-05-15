@@ -27,7 +27,21 @@ function Dashboard() {
 
   useEffect(() => {
 
-    getClients();
+    if (!employee) {
+
+      navigate("/login");
+
+      return;
+    }
+
+
+
+
+
+
+
+
+    fetchClients();
 
   }, []);
 
@@ -38,8 +52,8 @@ function Dashboard() {
 
 
 
-  // GET CLIENTS
-  const getClients = async () => {
+  // FETCH CLIENTS
+  const fetchClients = async () => {
 
     try {
 
@@ -56,18 +70,18 @@ function Dashboard() {
 
 
 
-      // FILTER EMPLOYEE CLIENTS
-      const filtered =
+      // FILTER CLIENTS
+      const filteredClients =
         response.data.filter(
-          (item) =>
+          (client) =>
 
-            item.employeeName
+            client.employeeName
               ?.trim()
               .toLowerCase()
 
             ===
 
-            employee?.name
+            employee.name
               ?.trim()
               .toLowerCase()
         );
@@ -79,13 +93,19 @@ function Dashboard() {
 
 
 
-      setClients(filtered);
+      setClients(
+        filteredClients
+      );
 
     }
 
     catch (error) {
 
       console.log(error);
+
+      alert(
+        "Failed To Load Clients"
+      );
     }
   };
 
@@ -96,7 +116,7 @@ function Dashboard() {
 
 
 
-  // UPDATE STATUS
+  // UPDATE SALES STATUS
   const updateStatus =
     async (id, status) => {
 
@@ -116,8 +136,21 @@ function Dashboard() {
 
 
 
-        // REFRESH CLIENTS
-        getClients();
+        // UPDATE UI
+        setClients((prev) =>
+
+          prev.map((client) =>
+
+            client._id === id
+
+              ? {
+                  ...client,
+                  status,
+                }
+
+              : client
+          )
+        );
 
       }
 
@@ -292,7 +325,7 @@ function Dashboard() {
 
 
 
-      {/* CARDS */}
+      {/* STATS */}
       <div
         style={{
           display: "grid",
@@ -306,6 +339,7 @@ function Dashboard() {
         }}
       >
 
+        {/* TOTAL CLIENTS */}
         <div style={cardStyle}>
 
           <h3 style={cardTitle}>
@@ -332,6 +366,7 @@ function Dashboard() {
 
 
 
+        {/* SALES DONE */}
         <div style={cardStyle}>
 
           <h3 style={cardTitle}>
@@ -354,8 +389,8 @@ function Dashboard() {
 
             {
               clients.filter(
-                (item) =>
-                  item.status ===
+                (client) =>
+                  client.status ===
                   "Done"
               ).length
             }
@@ -490,106 +525,134 @@ function Dashboard() {
 
           <tbody>
 
-            {clients.map(
-              (client, index) => (
+            {clients.length > 0 ? (
 
-                <tr key={index}>
+              clients.map(
+                (client, index) => (
 
-                  <td style={tdStyle}>
-                    {
-                      client.clientName
-                    }
-                  </td>
+                  <tr key={index}>
 
-
-
-
-
-
-
-
-                  <td style={tdStyle}>
-                    {client.email}
-                  </td>
-
-
-
-
-
-
-
-
-                  <td style={tdStyle}>
-                    {client.phone}
-                  </td>
-
-
-
-
-
-
-
-
-                  <td style={tdStyle}>
-                    {client.location}
-                  </td>
-
-
-
-
-
-
-
-
-                  <td style={tdStyle}>
-
-                    <select
-                      value={
-                        client.status
+                    <td style={tdStyle}>
+                      {
+                        client.clientName
                       }
+                    </td>
 
-                      onChange={(e) =>
-                        updateStatus(
-                          client._id,
-                          e.target.value
-                        )
+
+
+
+
+
+
+
+                    <td style={tdStyle}>
+                      {client.email}
+                    </td>
+
+
+
+
+
+
+
+
+                    <td style={tdStyle}>
+                      {client.phone}
+                    </td>
+
+
+
+
+
+
+
+
+                    <td style={tdStyle}>
+                      {
+                        client.location
                       }
+                    </td>
 
-                      style={{
-                        padding:
-                          "10px",
 
-                        borderRadius:
-                          "10px",
 
-                        border:
-                          "none",
 
-                        background:
-                          client.status ===
-                          "Done"
-                            ? "#22c55e"
-                            : "#f59e0b",
 
-                        color:
-                          "white",
-                      }}
-                    >
 
-                      <option>
-                        Not Done
-                      </option>
 
-                      <option>
-                        Done
-                      </option>
 
-                    </select>
+                    <td style={tdStyle}>
 
-                  </td>
+                      <select
+                        value={
+                          client.status
+                        }
 
-                </tr>
+                        onChange={(e) =>
+                          updateStatus(
+                            client._id,
+                            e.target.value
+                          )
+                        }
+
+                        style={{
+                          padding:
+                            "10px",
+
+                          borderRadius:
+                            "10px",
+
+                          border:
+                            "none",
+
+                          background:
+                            client.status ===
+                            "Done"
+                              ? "#22c55e"
+                              : "#f59e0b",
+
+                          color:
+                            "white",
+                        }}
+                      >
+
+                        <option>
+                          Not Done
+                        </option>
+
+                        <option>
+                          Done
+                        </option>
+
+                      </select>
+
+                    </td>
+
+                  </tr>
+                )
               )
+
+            ) : (
+
+              <tr>
+
+                <td
+                  colSpan="5"
+
+                  style={{
+                    padding:
+                      "20px",
+
+                    textAlign:
+                      "center",
+
+                    color:
+                      "#94a3b8",
+                  }}
+                >
+                  No Clients Added
+                </td>
+
+              </tr>
             )}
 
           </tbody>
