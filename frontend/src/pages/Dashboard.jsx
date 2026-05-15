@@ -92,8 +92,21 @@ function Dashboard() {
   // LOGOUT
   const logout = () => {
 
+    // REMOVE ONLY SESSION
+
     localStorage.removeItem(
       "isLoggedIn"
+    );
+
+
+
+
+
+
+
+
+    localStorage.removeItem(
+      "isHRLoggedIn"
     );
 
 
@@ -113,6 +126,8 @@ function Dashboard() {
 
 
 
+
+    // KEEP SAVED LOGIN DETAILS
 
     navigate("/login");
   };
@@ -141,7 +156,7 @@ function Dashboard() {
       }}
     >
 
-      {/* TOP HEADER */}
+      {/* HEADER */}
       <div
         style={{
           display: "flex",
@@ -327,7 +342,7 @@ function Dashboard() {
 
 
 
-      {/* ADD CLIENT BUTTON */}
+      {/* ADD CLIENT */}
       <button
         onClick={() =>
           navigate("/add-client")
