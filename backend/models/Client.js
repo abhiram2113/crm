@@ -1,34 +1,38 @@
-const mongoose = require("mongoose");
+const mongoose =
+  require("mongoose");
 
-const clientSchema = new mongoose.Schema({
-  employeeName: {
-    type: String,
-    default: "",
-  },
+const clientSchema =
+  new mongoose.Schema({
 
-  name: {
-    type: String,
-  },
+    employeeName: {
+      type: String,
+    },
 
-  phone: {
-    type: String,
-  },
+    clientName: {
+      type: String,
+    },
 
-  email: {
-    type: String,
-  },
+    email: {
+      type: String,
+    },
 
-  location: {
-    type: String,
-  },
+    phone: {
+      type: String,
+    },
 
-  status: {
-    type: String,
-    default: "Not Done",
-  },
-});
+    location: {
+      type: String,
+    },
 
-module.exports = mongoose.model(
-  "Client",
-  clientSchema
-);
+    status: {
+      type: String,
+      default:
+        "Not Done",
+    },
+  });
+
+module.exports =
+  mongoose.model(
+    "Client",
+    clientSchema
+  );

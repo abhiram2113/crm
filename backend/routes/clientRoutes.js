@@ -2,31 +2,136 @@ const express = require("express");
 
 const router = express.Router();
 
-const {
-  addClient,
-  getClients,
-  updateStatus,
-} = require("../controllers/clientController");
+const Client =
+  require("../models/Client");
 
 
+
+
+// ======================
 // ADD CLIENT
+// ======================
+
 router.post(
   "/",
-  addClient
+  async (req, res) => {
+
+    try {
+
+      const client =
+        new Client(req.body);
+
+      await client.save();
+
+      res.json({
+        success: true,
+        client,
+      });
+
+    }
+
+    catch (error) {
+
+      console.log(error);
+
+      res.status(500).json({
+        success: false,
+        message:
+          error.message,
+      });
+    }
+  }
 );
 
 
-// GET CLIENTS
+
+
+// ======================
+// GET ALL CLIENTS
+// ======================
+
 router.get(
   "/",
-  getClients
+  async (req, res) => {
+
+    try {
+
+      const clients =
+        await Client.find();
+
+      res.json(clients);
+
+    }
+
+    catch (error) {
+
+      console.log(error);
+
+      res.status(500).json({
+        success: false,
+        message:
+          error.message,
+      });
+    }
+  }
 );
 
 
+
+
+// ======================
 // UPDATE STATUS
+// ======================
+
 router.put(
   "/:id",
-  updateStatus
+  async (req, res) => {
+
+    try {
+
+      const updatedClient =
+        await Client.findByIdAndUpdate(
+
+          req.params.id,
+
+          {
+            status:
+              req.body.status,
+          },
+
+          {
+            new: true,
+          }
+        );
+
+
+
+
+
+
+
+
+      res.json({
+        success: true,
+        updatedClient,
+      });
+
+    }
+
+    catch (error) {
+
+      console.log(error);
+
+      res.status(500).json({
+        success: false,
+        message:
+          error.message,
+      });
+    }
+  }
 );
+
+
+
 
 module.exports = router;
