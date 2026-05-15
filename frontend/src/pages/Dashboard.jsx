@@ -1,5 +1,3 @@
-// frontend/src/pages/Dashboard.jsx
-
 import { useEffect, useState } from "react";
 
 import axios from "axios";
@@ -58,11 +56,20 @@ function Dashboard() {
 
 
 
+      // FILTER EMPLOYEE CLIENTS
       const filtered =
         response.data.filter(
           (item) =>
-            item.employeeName ===
-            employee.name
+
+            item.employeeName
+              ?.trim()
+              .toLowerCase()
+
+            ===
+
+            employee?.name
+              ?.trim()
+              .toLowerCase()
         );
 
 
@@ -89,24 +96,53 @@ function Dashboard() {
 
 
 
+  // UPDATE STATUS
+  const updateStatus =
+    async (id, status) => {
+
+      try {
+
+        await axios.put(
+
+          `https://crm-1q6v.onrender.com/api/clients/${id}`,
+
+          { status }
+        );
+
+
+
+
+
+
+
+
+        // REFRESH CLIENTS
+        getClients();
+
+      }
+
+      catch (error) {
+
+        console.log(error);
+
+        alert(
+          "Failed To Update Status"
+        );
+      }
+    };
+
+
+
+
+
+
+
+
   // LOGOUT
   const logout = () => {
 
-    // REMOVE ONLY SESSION
-
     localStorage.removeItem(
       "isLoggedIn"
-    );
-
-
-
-
-
-
-
-
-    localStorage.removeItem(
-      "isHRLoggedIn"
     );
 
 
@@ -126,8 +162,6 @@ function Dashboard() {
 
 
 
-
-    // KEEP SAVED LOGIN DETAILS
 
     navigate("/login");
   };
@@ -176,11 +210,11 @@ function Dashboard() {
             style={{
               color: "white",
 
-              marginBottom: "5px",
-
               fontSize: "38px",
 
               fontWeight: "bold",
+
+              marginBottom: "5px",
             }}
           >
             HireOrbit
@@ -272,7 +306,6 @@ function Dashboard() {
         }}
       >
 
-        {/* TOTAL CLIENTS */}
         <div style={cardStyle}>
 
           <h3 style={cardTitle}>
@@ -299,7 +332,6 @@ function Dashboard() {
 
 
 
-        {/* SALES DONE */}
         <div style={cardStyle}>
 
           <h3 style={cardTitle}>
@@ -442,7 +474,7 @@ function Dashboard() {
               </th>
 
               <th style={thStyle}>
-                Status
+                Sales Status
               </th>
 
             </tr>
@@ -511,13 +543,27 @@ function Dashboard() {
 
                   <td style={tdStyle}>
 
-                    <span
+                    <select
+                      value={
+                        client.status
+                      }
+
+                      onChange={(e) =>
+                        updateStatus(
+                          client._id,
+                          e.target.value
+                        )
+                      }
+
                       style={{
                         padding:
-                          "8px 15px",
+                          "10px",
 
                         borderRadius:
-                          "20px",
+                          "10px",
+
+                        border:
+                          "none",
 
                         background:
                           client.status ===
@@ -530,9 +576,15 @@ function Dashboard() {
                       }}
                     >
 
-                      {client.status}
+                      <option>
+                        Not Done
+                      </option>
 
-                    </span>
+                      <option>
+                        Done
+                      </option>
+
+                    </select>
 
                   </td>
 
