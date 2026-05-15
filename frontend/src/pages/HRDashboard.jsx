@@ -1,3 +1,5 @@
+// frontend/src/pages/HRDashboard.jsx
+
 import { useEffect, useState } from "react";
 
 import axios from "axios";
@@ -36,7 +38,10 @@ function HRDashboard() {
 
 
 
+  // =========================
   // GET EMPLOYEES
+  // =========================
+
   const getEmployees =
     async () => {
 
@@ -74,7 +79,10 @@ function HRDashboard() {
 
 
 
+  // =========================
   // GET CLIENTS
+  // =========================
+
   const getClients =
     async () => {
 
@@ -112,7 +120,62 @@ function HRDashboard() {
 
 
 
+  // =========================
+  // UPDATE SALES STATUS
+  // =========================
+
+  const updateStatus =
+    async (id, status) => {
+
+      try {
+
+        await axios.put(
+
+          `https://crm-1q6v.onrender.com/api/clients/${id}`,
+
+          { status }
+        );
+
+
+
+
+
+
+
+
+        // REFRESH CLIENTS
+        getClients();
+
+      }
+
+      catch (error) {
+
+        console.log(error);
+
+
+
+
+
+
+
+
+        alert(
+          "Failed To Update Status"
+        );
+      }
+    };
+
+
+
+
+
+
+
+
+  // =========================
   // DELETE EMPLOYEE
+  // =========================
+
   const deleteEmployee =
     async (id) => {
 
@@ -149,6 +212,13 @@ function HRDashboard() {
 
         console.log(error);
 
+
+
+
+
+
+
+
         alert(
           "Failed To Remove Employee"
         );
@@ -162,7 +232,10 @@ function HRDashboard() {
 
 
 
+  // =========================
   // LOGOUT
+  // =========================
+
   const logout = () => {
 
     localStorage.removeItem(
@@ -203,7 +276,10 @@ function HRDashboard() {
       }}
     >
 
+      {/* ========================= */}
       {/* HEADER */}
+      {/* ========================= */}
+
       <div
         style={{
           display: "flex",
@@ -293,7 +369,10 @@ function HRDashboard() {
 
 
 
+      {/* ========================= */}
       {/* TOP CARDS */}
+      {/* ========================= */}
+
       <div
         style={{
           display: "grid",
@@ -404,7 +483,10 @@ function HRDashboard() {
 
 
 
-      {/* EMPLOYEE SECTION */}
+      {/* ========================= */}
+      {/* EMPLOYEES TABLE */}
+      {/* ========================= */}
+
       <div
         style={{
           background: "#111827",
@@ -555,7 +637,10 @@ function HRDashboard() {
 
 
 
-      {/* CLIENT SECTION */}
+      {/* ========================= */}
+      {/* CLIENT TABLE */}
+      {/* ========================= */}
+
       <div
         style={{
           background: "#111827",
@@ -706,13 +791,27 @@ function HRDashboard() {
 
                   <td style={tdStyle}>
 
-                    <span
+                    <select
+                      value={
+                        client.status
+                      }
+
+                      onChange={(e) =>
+                        updateStatus(
+                          client._id,
+                          e.target.value
+                        )
+                      }
+
                       style={{
                         padding:
-                          "8px 14px",
+                          "10px",
 
                         borderRadius:
-                          "20px",
+                          "10px",
+
+                        border:
+                          "none",
 
                         background:
                           client.status ===
@@ -722,12 +821,21 @@ function HRDashboard() {
 
                         color:
                           "white",
+
+                        cursor:
+                          "pointer",
                       }}
                     >
 
-                      {client.status}
+                      <option>
+                        Not Done
+                      </option>
 
-                    </span>
+                      <option>
+                        Done
+                      </option>
+
+                    </select>
 
                   </td>
 
