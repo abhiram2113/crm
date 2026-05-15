@@ -2,6 +2,7 @@ import {
   BrowserRouter,
   Routes,
   Route,
+  Navigate,
 } from "react-router-dom";
 
 import Login from "./pages/Login";
@@ -10,6 +11,12 @@ import HRDashboard from "./pages/HRDashboard";
 import AddClient from "./pages/AddClient";
 
 function App() {
+
+  const employeeLoggedIn =
+    localStorage.getItem("isLoggedIn");
+
+  const hrLoggedIn =
+    localStorage.getItem("isHRLoggedIn");
 
   return (
 
@@ -29,17 +36,29 @@ function App() {
 
         <Route
           path="/dashboard"
-          element={<Dashboard />}
-        />
-
-        <Route
-          path="/hr-dashboard"
-          element={<HRDashboard />}
+          element={
+            employeeLoggedIn
+              ? <Dashboard />
+              : <Navigate to="/login" />
+          }
         />
 
         <Route
           path="/add-client"
-          element={<AddClient />}
+          element={
+            employeeLoggedIn
+              ? <AddClient />
+              : <Navigate to="/login" />
+          }
+        />
+
+        <Route
+          path="/hr-dashboard"
+          element={
+            hrLoggedIn
+              ? <HRDashboard />
+              : <Navigate to="/login" />
+          }
         />
 
       </Routes>

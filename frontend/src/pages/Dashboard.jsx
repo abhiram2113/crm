@@ -1,5 +1,10 @@
+// frontend/src/pages/Dashboard.jsx
+
 import { useEffect, useState } from "react";
+
 import { useNavigate } from "react-router-dom";
+
+import axios from "axios";
 
 function Dashboard() {
 
@@ -7,166 +12,65 @@ function Dashboard() {
 
   const [clients, setClients] = useState([]);
 
-  const [employee, setEmployee] =
-    useState(null);
+  const employee =
+    JSON.parse(
+      localStorage.getItem("employee")
+    );
 
-
-
-  // LOAD EMPLOYEE
   useEffect(() => {
 
-    const storedEmployee =
-      JSON.parse(
-        localStorage.getItem("employee")
-      );
-
-    if (!storedEmployee) {
-
-      navigate("/login");
-
-    } else {
-
-      setEmployee(storedEmployee);
-
-    }
+    getClients();
 
   }, []);
 
-
-
-
-  // LOAD CLIENTS
-  useEffect(() => {
-
-    fetchClients();
-
-  }, []);
-
-
-
-
-  const fetchClients = async () => {
+  const getClients = async () => {
 
     try {
 
       const response =
-        await fetch(
+        await axios.get(
           "https://crm-1q6v.onrender.com/api/clients"
         );
 
-      const data =
-        await response.json();
+      const filtered =
+        response.data.filter(
+          (item) =>
+            item.employeeName === employee.name
+        );
 
-      setClients(data);
+      setClients(filtered);
 
-    }
-
-    catch (error) {
+    } catch (error) {
 
       console.log(error);
-
     }
   };
 
+  const logout = () => {
 
+    localStorage.removeItem(
+      "isLoggedIn"
+    );
 
+    localStorage.removeItem(
+      "employee"
+    );
 
-
-  // UPDATE SALE STATUS
-  const updateStatus =
-    async (id, status) => {
-
-      try {
-
-        await fetch(
-          `https://crm-1q6v.onrender.com/api/clients/${id}`,
-          {
-            method: "PUT",
-
-            headers: {
-              "Content-Type":
-                "application/json",
-            },
-
-            body: JSON.stringify({
-              saleStatus: status,
-            }),
-          }
-        );
-
-        fetchClients();
-
-      }
-
-      catch (error) {
-
-        console.log(error);
-
-      }
-    };
-
-
-
-
-
-
-  // LOGOUT
-  const handleLogout = async () => {
-
-    try {
-
-      const attendanceId =
-        localStorage.getItem(
-          "attendanceId"
-        );
-
-
-
-      if (attendanceId) {
-
-        await fetch(
-          `https://crm-1q6v.onrender.com/api/attendance/logout/${attendanceId}`,
-          {
-            method: "PUT",
-          }
-        );
-      }
-
-
-
-      localStorage.removeItem(
-        "employee"
-      );
-
-      localStorage.removeItem(
-        "attendanceId"
-      );
-
-
-
-      navigate("/login");
-
-    }
-
-    catch (error) {
-
-      console.log(error);
-
-    }
+    navigate("/login");
   };
-
-
-
-
-
 
   return (
 
     <div
       style={{
+        minHeight: "100vh",
+        background:
+          "linear-gradient(135deg,#0f172a,#1e293b)",
         padding: "30px",
       }}
     >
+
+      {/* TOP BAR */}
 
       <div
         style={{
@@ -174,34 +78,42 @@ function Dashboard() {
           justifyContent:
             "space-between",
           alignItems: "center",
-          marginBottom: "20px",
+          marginBottom: "30px",
         }}
       >
 
         <div>
 
-          <h1>
-            Hire Orbit CRM
+          <h1
+            style={{
+              color: "white",
+              marginBottom: "5px",
+            }}
+          >
+            Employee Dashboard
           </h1>
 
-          <h3>
-            Welcome{" "}
-            {employee?.name}
-          </h3>
+          <p
+            style={{
+              color: "#94a3b8",
+            }}
+          >
+            Welcome {employee?.name}
+          </p>
 
         </div>
 
-
-
         <button
-          onClick={handleLogout}
+          onClick={logout}
           style={{
-            padding: "10px 20px",
-            background: "red",
-            color: "white",
+            padding:
+              "12px 25px",
             border: "none",
-            borderRadius: "5px",
+            borderRadius: "10px",
+            background: "#ef4444",
+            color: "white",
             cursor: "pointer",
+            fontWeight: "bold",
           }}
         >
           Logout
@@ -209,127 +121,231 @@ function Dashboard() {
 
       </div>
 
+      {/* CARDS */}
 
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns:
+            "repeat(auto-fit,minmax(250px,1fr))",
+          gap: "20px",
+          marginBottom: "30px",
+        }}
+      >
 
+        <div
+          style={{
+            background: "#111827",
+            padding: "25px",
+            borderRadius: "20px",
+          }}
+        >
+          <h3
+            style={{
+              color: "#94a3b8",
+            }}
+          >
+            Total Clients
+          </h3>
 
+          <h1
+            style={{
+              color: "white",
+              fontSize: "40px",
+            }}
+          >
+            {clients.length}
+          </h1>
+        </div>
+
+        <div
+          style={{
+            background: "#111827",
+            padding: "25px",
+            borderRadius: "20px",
+          }}
+        >
+          <h3
+            style={{
+              color: "#94a3b8",
+            }}
+          >
+            Sales Done
+          </h3>
+
+          <h1
+            style={{
+              color: "#22c55e",
+              fontSize: "40px",
+            }}
+          >
+            {
+              clients.filter(
+                (item) =>
+                  item.status ===
+                  "Done"
+              ).length
+            }
+          </h1>
+        </div>
+
+      </div>
+
+      {/* ADD CLIENT BUTTON */}
 
       <button
         onClick={() =>
           navigate("/add-client")
         }
         style={{
-          padding: "10px 20px",
-          marginBottom: "20px",
-          background: "#007bff",
-          color: "white",
+          padding:
+            "14px 25px",
           border: "none",
-          borderRadius: "5px",
+          borderRadius: "12px",
+          background: "#0ea5e9",
+          color: "white",
+          fontWeight: "bold",
           cursor: "pointer",
+          marginBottom: "30px",
         }}
       >
-        Add Client
+        + Add Client
       </button>
 
+      {/* CLIENT TABLE */}
 
-
-
-
-
-      <table
-        border="1"
-        cellPadding="10"
+      <div
         style={{
-          width: "100%",
-          borderCollapse:
-            "collapse",
+          background: "#111827",
+          borderRadius: "20px",
+          padding: "20px",
+          overflowX: "auto",
         }}
       >
 
-        <thead>
+        <h2
+          style={{
+            color: "white",
+            marginBottom: "20px",
+          }}
+        >
+          My Clients
+        </h2>
 
-          <tr>
+        <table
+          style={{
+            width: "100%",
+            borderCollapse:
+              "collapse",
+          }}
+        >
 
-            <th>Name</th>
+          <thead>
 
-            <th>Email</th>
+            <tr
+              style={{
+                background: "#1e293b",
+              }}
+            >
 
-            <th>Phone</th>
+              <th style={thStyle}>
+                Client
+              </th>
 
-            <th>Location</th>
+              <th style={thStyle}>
+                Email
+              </th>
 
-            <th>Sale Status</th>
+              <th style={thStyle}>
+                Phone
+              </th>
 
-          </tr>
+              <th style={thStyle}>
+                Location
+              </th>
 
-        </thead>
-
-
-
-
-
-        <tbody>
-
-          {clients.map((client) => (
-
-            <tr key={client._id}>
-
-              <td>
-                {client.name}
-              </td>
-
-              <td>
-                {client.email}
-              </td>
-
-              <td>
-                {client.phone}
-              </td>
-
-              <td>
-                {client.location}
-              </td>
-
-
-
-
-
-              <td>
-
-                <select
-                  value={
-                    client.saleStatus
-                  }
-
-                  onChange={(e) =>
-                    updateStatus(
-                      client._id,
-                      e.target.value
-                    )
-                  }
-                >
-
-                  <option value="Not Done">
-                    Not Done
-                  </option>
-
-                  <option value="Sale Done">
-                    Sale Done
-                  </option>
-
-                </select>
-
-              </td>
+              <th style={thStyle}>
+                Status
+              </th>
 
             </tr>
 
-          ))}
+          </thead>
 
-        </tbody>
+          <tbody>
 
-      </table>
+            {
+              clients.map(
+                (item, index) => (
+
+                  <tr
+                    key={index}
+                  >
+
+                    <td style={tdStyle}>
+                      {item.clientName}
+                    </td>
+
+                    <td style={tdStyle}>
+                      {item.email}
+                    </td>
+
+                    <td style={tdStyle}>
+                      {item.phone}
+                    </td>
+
+                    <td style={tdStyle}>
+                      {item.location}
+                    </td>
+
+                    <td style={tdStyle}>
+
+                      <span
+                        style={{
+                          padding:
+                            "8px 15px",
+                          borderRadius:
+                            "20px",
+                          background:
+                            item.status ===
+                            "Done"
+                              ? "#22c55e"
+                              : "#f59e0b",
+                          color:
+                            "white",
+                        }}
+                      >
+                        {item.status}
+                      </span>
+
+                    </td>
+
+                  </tr>
+                )
+              )
+            }
+
+          </tbody>
+
+        </table>
+
+      </div>
 
     </div>
   );
 }
+
+const thStyle = {
+  padding: "15px",
+  color: "white",
+  textAlign: "left",
+};
+
+const tdStyle = {
+  padding: "15px",
+  color: "#cbd5e1",
+  borderBottom:
+    "1px solid #1e293b",
+};
 
 export default Dashboard;
