@@ -1,8 +1,8 @@
 import { useState } from "react";
 
-import { useNavigate } from "react-router-dom";
-
 import axios from "axios";
+
+import { useNavigate } from "react-router-dom";
 
 function Login() {
 
@@ -23,9 +23,6 @@ function Login() {
   const [password, setPassword] =
     useState("");
 
-  const [rememberMe, setRememberMe] =
-    useState(false);
-
 
 
 
@@ -38,31 +35,10 @@ function Login() {
 
     try {
 
-      // SAVE LOGIN
-      if (rememberMe) {
-
-        localStorage.setItem(
-          "savedEmail",
-          email
-        );
-
-        localStorage.setItem(
-          "savedPassword",
-          password
-        );
-      }
-
-
-
-
-
-
-
-
       // HR LOGIN
       if (isHR) {
 
-        const savedHR =
+        const hrData =
           JSON.parse(
             localStorage.getItem(
               "hrAccount"
@@ -76,9 +52,7 @@ function Login() {
 
 
 
-        if (
-          !savedHR
-        ) {
+        if (!hrData) {
 
           alert(
             "No HR Account Found"
@@ -95,15 +69,22 @@ function Login() {
 
 
         if (
-          savedHR.email === email
+          hrData.email === email
           &&
-          savedHR.password === password
+          hrData.password === password
         ) {
 
           localStorage.setItem(
             "isHRLoggedIn",
             "true"
           );
+
+
+
+
+
+
+
 
           navigate(
             "/hr-dashboard"
@@ -187,7 +168,7 @@ function Login() {
       else {
 
         alert(
-          "Invalid Credentials"
+          "Invalid Employee Credentials"
         );
       }
 
@@ -272,17 +253,16 @@ function Login() {
 
 
       // EMPLOYEE SIGNUP
-      const response =
-        await axios.post(
+      await axios.post(
 
-          "https://crm-1q6v.onrender.com/api/employees/register",
+        "https://crm-1q6v.onrender.com/api/employees/register",
 
-          {
-            name,
-            email,
-            password,
-          }
-        );
+        {
+          name,
+          email,
+          password,
+        }
+      );
 
 
 
@@ -341,8 +321,6 @@ function Login() {
 
         background:
           "linear-gradient(135deg,#020617,#0f172a,#1e293b)",
-
-        padding: "20px",
       }}
     >
 
@@ -557,48 +535,6 @@ function Login() {
 
           style={inputStyle}
         />
-
-
-
-
-
-
-
-
-
-        {/* REMEMBER */}
-        {!isSignup && (
-
-          <div
-            style={{
-              display: "flex",
-
-              alignItems: "center",
-
-              gap: "10px",
-
-              marginBottom: "20px",
-
-              color: "white",
-            }}
-          >
-
-            <input
-              type="checkbox"
-
-              checked={rememberMe}
-
-              onChange={() =>
-                setRememberMe(
-                  !rememberMe
-                )
-              }
-            />
-
-            Remember Me
-
-          </div>
-        )}
 
 
 
